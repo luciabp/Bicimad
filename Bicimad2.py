@@ -113,7 +113,6 @@ def main(sc, years, months):
                 lrdd.append(sc.textFile(f"{y}0{m}_movements.json"))
             else:
                 lrdd.append(sc.textFile(f"{y}{m}_movements.json"))
-    print("JJ",len(lrdd))    
     
     for y in years:
         for m in months:
