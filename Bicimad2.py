@@ -36,13 +36,14 @@ def mapper_usuario(line):
 def mapper_usuario_unico(line):
     data = json.loads(line)
     _id = data['_id']
+    codigo_usuario = data['user_day_code']
     estacion_salida = data['idunplug_station']
     estacion_llegada = data['idplug_station']
     franja_horaria = data['unplug_hourTime']
     tiempo_viaje = data['travel_time']
     tipo_usuario = data['user_type']
     rango_edad = data['ageRange']
-    return _id,1
+    return codigo_usuario,1
 
 def crear_lista_rdd(lista):
     result1 = []
@@ -87,11 +88,11 @@ def estudio_usuario_unico(lrdd,archivo_salida):
     usuarios = []
     mes = []
     for i in range(6):
-        rdd_usuario_unico = lrdd[i].map(mapper_usuario_unico).groupByKey().map(lambda x : (x[0],1)).collect()
+        rdd_usuario_unico = (lrdd[i]).map(mapper_usuario_unico).groupByKey().map(lambda x : (x[0],1)).collect()
         archivo_salida.write(str(rdd_usuario_unico))
         usuario = sum(crear_lista(list(rdd_usuario_unico))[1])
         usuarios.append(usuario)
-        mes.append(i)
+        mes.append(i+1)
     matplotlib.pyplot.bar(mes,usuarios)
     matplotlib.pyplot.ylabel('Usuarios Unicos')
     matplotlib.pyplot.xlabel('Mes')
@@ -112,6 +113,8 @@ def main(sc, years, months):
                 lrdd.append(sc.textFile(f"{y}0{m}_movements.json"))
             else:
                 lrdd.append(sc.textFile(f"{y}{m}_movements.json"))
+    print("JJ",len(lrdd))    
+    
     for y in years:
         for m in months:
             if m<10:
@@ -130,7 +133,7 @@ if __name__ =="__main__":
 	else:
 		years=list(map(int, sys.argv[1][1:-1].split(",")))
 	if len(sys.argv) <= 2:
-		months=[6]
+		months=[1,2,3,4,5,6]
 	else:
 		months=list(map(int, sys.argv[2][1:-1].split(",")))
 
