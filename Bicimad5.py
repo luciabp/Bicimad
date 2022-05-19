@@ -192,14 +192,15 @@ def asociar_barrio(tupla):
     for i in range(len(Barrios['lista'])):
         if tupla[0] in Barrios['lista'][i]:
             nodo = Barrios['nombres'][i]
-    return nodo,tupla[1]
+            return nodo,tupla[1]
+    return"nada",1
 
 
 def estudio_station(rdd19,rdd20,archivo_salida):
     
     rdd_unplugstation19 = rdd19.map(mapper_unplugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).collect()
     #rdd_unplugstation20 = rdd20.map(mapper_unplugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).collect()
-    #rdd_plugstation19 = rdd19.map(mapper_unplugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).collect()
+    #rdd_plugstation19 = rdd19.map(mapper_plugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).collect()
     #rdd_plugstation20 = rdd20.map(mapper_plugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).collect()
     archivo_salida.write(str(rdd_unplugstation19))
     #archivo_salida.write(str(rdd_unplugstation20))
@@ -213,7 +214,7 @@ def estudio_station(rdd19,rdd20,archivo_salida):
     fig, ax =plt.subplots(1,1)
     data = []
     for i in range(len(ejes_unplug19[1])): #<----
-        data.append([ejes_unplug19[1][i]])#,ejes_unplug20[1][i]], ejes_plug19[1][i],ejes_plug20[1][i])
+        data.append([ejes_unplug19[1][i]])#,ejes_unplug20[1][i], ejes_plug19[1][i],ejes_plug20[1][i]])
     column_labels=["Salidas 19", "Salidas 20", "Llegadas 19", "Llegadas 20"]
     ax.axis('tight')
     ax.axis('off')
@@ -240,49 +241,45 @@ def estudio_usuario_unico(lrdd,archivo_salida):
     plt.title('Tiempo medio dependi')
     plt.show()
     
-def proceso(rdd,archivo_salida,lrdd):
+def proceso(rdd19,rdd20,lrdd19,lrdd20, months, archivo_salida):
     #estudio_usuario(rdd,archivo_salida)
     #estudio_edad(rdd,archivo_salida)
     #estudio_usuario_unico(lrdd,archivo_salida)
-    estudio_station(rdd, archivo_salida)
+    estudio_station(rdd19,rdd20, archivo_salida)
 
 def main(sc, years, months):
-    rdd = sc.parallelize([])
-    lrdd = []
+    rdd19 = sc.parallelize([])
+    rdd20 = sc.parallelize([])
+    lrdd19 = []
+    lrdd20 = []
     for y in years:
         for m in months:
-            if m<10:
-                lrdd.append(sc.textFile(f"{y}0{m}_movements.json"))
+            if y == 2020 or (y == 2019 and m > 6):
+                if m<10:
+                    filename = f"{y}0{m}_movements.json"
+                else:
+                    filename = f"{y}{m}_movements.json"
             else:
-                lrdd.append(sc.textFile(f"{y}{m}_movements.json"))
-    
-    for y in years:
-        for m in months:
-            if m<10:
-                filename = f"{y}0{m}_movements.json"
+                filename = f"{y}0{m}_Usage_Bicimad.json"
+            if y == 2019:
+                rdd19=rdd19.union(sc.textFile(filename))
+                lrdd19.append(sc.textFile(filename))
             else:
-                filename = f"{y}{m}_movements.json"
-            rdd=rdd.union(sc.textFile(filename))
+                rdd20 = rdd20.union(sc.textFile(filename))
+                lrdd20.append(sc.textFile(filename))
     archivo_salida=open('bicimad.txt','w')
-    proceso(rdd,archivo_salida,lrdd)
+    proceso(rdd19,rdd20,lrdd19,lrdd20, months, archivo_salida)
     archivo_salida.close()
 
 #Python3 bicimad.py (habra que revisar esto)
 if __name__ =="__main__":
 	if len(sys.argv) <= 1:
-		years=[2018]
+		years=[2019,2020]
 	else:
 		years=list(map(int, sys.argv[1][1:-1].split(",")))
 	if len(sys.argv) <= 2:
-		months=[1]
+		months=[5,6,7,8,9,10]
 	else:
 		months=list(map(int, sys.argv[2][1:-1].split(",")))
 
 	main(sc, years,months)
-    
-
-
-
-
-
-
