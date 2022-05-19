@@ -52,7 +52,9 @@ def estudio_edad(rdd19, rdd20, archivo_salida):
 	rdd20_edad_media = rdd20.map(mapper_edad).groupByKey().map(lambda x : (x[0],sum(list(x[1]))/len(list(x[1])))).collect()
 	archivo_salida.write(str(rdd20_edad_media))
 	ejes20 = crear_lista(list(rdd20_edad_media))
-    
+	plt.hist([ejes19[1], ejes20[1]], ejes19[0],label=['2019', '2020'])
+	plt.legend(loc='upper left')
+	plt.show()
     # GRAFICO
 	# matplotlib.pyplot.bar(ejes[0],ejes[1])
 	# matplotlib.pyplot.ylabel('Media')
@@ -69,6 +71,9 @@ def estudio_usuario(rdd19,rdd20, archivo_salida):
 	archivo_salida.write(str(rdd20_usuario_media))
 	ejes20  = crear_lista(list(rdd20_usuario_media))
     # grafico
+	plt.hist([ejes19[1], ejes20[1]], ejes19[0],label=['2019', '2020'])
+	plt.legend(loc='upper left')
+	plt.show()
 	#matplotlib.pyplot.bar(ejes[0],ejes[1])
 	#matplotlib.pyplot.ylabel('Media')
 	#matplotlib.pyplot.xlabel('Usuario')
@@ -99,8 +104,8 @@ def estudio_usuario_unico(lrdd19, lrdd20, months, archivo_salida):
     #plt.show()
     
 def proceso(rdd19,rdd20,lrdd19,lrdd20, months, archivo_salida):
-    estudio_usuario(rdd19, rdd20, months, archivo_salida)
-    estudio_edad(rdd19, rdd20, months, archivo_salida)
+    estudio_usuario(rdd19, rdd20, archivo_salida)
+    estudio_edad(rdd19, rdd20, archivo_salida)
     estudio_usuario_unico(lrdd19, lrdd20, months, archivo_salida)
 
 def main(sc, years, months):
