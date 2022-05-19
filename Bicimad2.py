@@ -171,7 +171,7 @@ if __name__ =="__main__":
 	else:
 		years=list(map(int, sys.argv[1][1:-1].split(",")))
 	if len(sys.argv) <= 2:
-		months=[1,2,3,4,5,6]
+		months=[1]
 	else:
 		months=list(map(int, sys.argv[2][1:-1].split(",")))
 
