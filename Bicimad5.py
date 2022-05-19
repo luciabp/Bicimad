@@ -25,12 +25,12 @@ def mapper_usuario(line):
 
 def mapper_plugstation(line):
     data = json.loads(line)
-    plug = data['idplug_base']
+    plug = data['idplug_station']
     return plug,1
 
 def mapper_unplugstation(line):
     data = json.loads(line)
-    unplug = data['idunplug_base']
+    unplug = data['idunplug_station']
     return unplug,1
 
 def mapper_usuario_unico(line):
@@ -86,7 +86,7 @@ Embajadores = [40,41,42,43,44,45,48,49,50,51,53]
 Cortes = [27,28,29,34,52,67,86]
 Justicia = [5,6,7,10,18,19,20,26,54,58]
 Universidad =[2,4,11,12,13,15,16,17,55,57,59,211]
-Sol = [1,22,25,31,32,33,56,210]
+Sol = [1,22,25,31,32,33,56,210,64]
 #Distrito 2 - Arganzuela
 Imperial = [167,236]
 Acacias = [46,47,162,163,169,170,173,174]
@@ -98,15 +98,15 @@ Atocha = [80,119,180]
 #Distrito 3 - Retiro
 Pacifico = [77,79,178]
 Adelfas = [78,84]
-Estrella = [73,84,182]
+Estrella = [73,84,182,82]
 Ibiza = [61,62,63,181]
 Jeronimos = [60,65,68,69,70,74,75,81,85]
 Niño_Jesus = [71,72,76,83]
 #Distrito 4 - Salamanca
 Recoletos = [87,90,92,93,94,95,96,102,104,105,106,107]
 Goya = [89,91,97,98,99,100,101,108,183]
-Fuente_del_Ebro = [184,185,187]
-Guindalera = [191,192,193,194,240,241,242,243]
+Fuente_del_Ebro = [184,185,187,66]
+Guindalera = [191,192,193,194,240,241,242,243,21]
 Lista = [143,144,145,186]
 Castellana = [88,103,109,142,190]
 #Distrito 5 - Chamartin
@@ -188,17 +188,16 @@ Barrios = {'nombres' : ['Palacio','Embajardores','Cortes','Justicia','Universida
                          Ventas,Pueblo_Nuevo,Concepcion,San_Pascual]}
 
 
-def asociar_barrio(tupla):  
+def asociar_barrio(tupla):
     for i in range(len(Barrios['lista'])):
         if tupla[0] in Barrios['lista'][i]:
             nodo = Barrios['nombres'][i]
             return nodo,tupla[1]
     return"nada",1
 
-
 def estudio_station(rdd19,rdd20,archivo_salida):
     
-    rdd_unplugstation19 = rdd19.map(mapper_unplugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).collect()
+    rdd_unplugstation19 = rdd19.map(mapper_unplugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).filter(lambda x : x[0]!="nada").collect()
     #rdd_unplugstation20 = rdd20.map(mapper_unplugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).collect()
     #rdd_plugstation19 = rdd19.map(mapper_plugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).collect()
     #rdd_plugstation20 = rdd20.map(mapper_plugstation).map(asociar_barrio).sortByKey(True,1).groupByKey().map(lambda x : (x[0],sum(list(x[1])))).collect()
@@ -222,9 +221,7 @@ def estudio_station(rdd19,rdd20,archivo_salida):
 
     plt.show()
 
-
 #----------------------------------------------------------------------------------------------------------
-
 
 def estudio_usuario_unico(lrdd,archivo_salida):
     usuarios = []
@@ -274,11 +271,13 @@ def main(sc, years, months):
 #Python3 bicimad.py (habra que revisar esto)
 if __name__ =="__main__":
 	if len(sys.argv) <= 1:
-		years=[2019,2020]
+		#years=[2019,2020]
+		years = [2019]
 	else:
 		years=list(map(int, sys.argv[1][1:-1].split(",")))
 	if len(sys.argv) <= 2:
-		months=[5,6,7,8,9,10]
+		#months=[5,6,7,8,9,10]
+		months=[5]
 	else:
 		months=list(map(int, sys.argv[2][1:-1].split(",")))
 
