@@ -239,15 +239,29 @@ def estudio_station(rdd19,rdd20,archivo_salida):
     ejes_plug19 = crear_lista(list(rdd_plugstation19))
     ejes_plug20 = crear_lista(list(rdd_plugstation20))
 
-    fig, ax =plt.subplots(1,1)
-    data = []
-    for i in range(len(ejes_unplug19[1])): #<----
-        data.append([ejes_unplug19[1][i],ejes_unplug20[1][i], ejes_plug19[1][i],ejes_plug20[1][i]])
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.suptitle('Salidas')
+    data_unplug19 = [ejes_unplug19[1][i] for i  in range(len(ejes_unplug19[1]))]
+    data_unplug20 = [ejes_unplug20[1][i] for i  in range(len(ejes_unplug20[1]))]
     column_labels=["Salidas 19", "Salidas 20", "Llegadas 19", "Llegadas 20"]
-    ax.axis('tight')
-    ax.axis('off')
-    ax.table(cellText=data,rowLabels=ejes_unplug19[0],colLabels=column_labels,loc="center")
+    ax1.axis('tight')
+    ax1.axis('off')
+    ax2.axis('tight')
+    ax2.axis('off')
+    ax1.table(cellText=data_unplug19,rowLabels=ejes_unplug19[0],colLabels=["Salidas 19"],loc="center")
+    ax2.table(cellText=data_unplug20,rowLabels=ejes_unplug20[0],colLabels=["Salidas 20"],loc="center")	
+    plt.show()
 
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.suptitle('LLegadas')
+    data_plug19 = [ejes_plug19[1][i] for i  in range(len(ejes_plug19[1]))]
+    data_plug20 = [ejes_plug20[1][i] for i  in range(len(ejes_plug20[1]))]
+    ax1.axis('tight')
+    ax1.axis('off')
+    ax2.axis('tight')
+    ax2.axis('off')
+    ax1.table(cellText=data_plug19,rowLabels=ejes_plug19[0],colLabels=["Llegadas 19"],loc="center")
+    ax2.table(cellText=data_plug20,rowLabels=ejes_plug20[0],colLabels=["Llegadas 20"],loc="center")	
     plt.show()
 
 #----------------------------------------------------------------------------------------------------------
