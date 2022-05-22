@@ -211,6 +211,7 @@ def estudio_edad(rdd19, rdd20, archivo_salida):
     #Buscamos tener el eje Y en minutos
 	for i in range(0,len(ejes19[1])):
 		ejes19[1][i] = ejes19[1][i]/60
+	for i in range(0,len(ejes20[1])):
 		ejes20[1][i] = ejes20[1][i]/60
         
 	matplotlib.pyplot.bar(ejes19[0],ejes19[1],bar_width,color='b',label='2019')
